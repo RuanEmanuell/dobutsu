@@ -1,6 +1,6 @@
 # Veja a versão em Português <a href="README-ptbr.md">aqui</a>
 
-## HardwareMaster
+## Dobutsu
 
 This project is a game made in C using the Raylib.
 

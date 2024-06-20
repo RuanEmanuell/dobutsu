@@ -1,0 +1,58 @@
+# depslib dependency file v1.0
+1718770847 source:c:\users\rogério\desktop\final_hero\final_hero\main.c
+	"raylib.h"
+	"texturas.h"
+	"texturas_demonio.h"
+	<math.h>
+	<stdbool.h>
+
+1718741544 source:c:\users\rogério\desktop\final_hero\final_hero\texturas.c
+	"texturas.h"
+
+1718742557 c:\users\rogério\desktop\final_hero\final_hero\texturas.h
+	"raylib.h"
+
+1718769945 c:\users\rogério\desktop\final_hero\final_hero\texturas_demonio.h
+	"raylib.h"
+
+1718769938 source:c:\users\rogério\desktop\final_hero\final_hero\texturas_demonio.c
+	"texturas_demonio.h"
+
+1718811249 source:c:\users\caupt - alunos\downloads\raylib-master\src\final-hero-main\main.c
+	"raylib.h"
+	"texturas.h"
+	"texturas_demonio.h"
+	<math.h>
+	<stdbool.h>
+
+1718811249 c:\users\caupt - alunos\downloads\raylib-master\src\final-hero-main\texturas.h
+	"raylib.h"
+
+1718811249 c:\users\caupt - alunos\downloads\raylib-master\src\final-hero-main\texturas_demonio.h
+	"raylib.h"
+
+1718811249 source:c:\users\caupt - alunos\downloads\raylib-master\src\final-hero-main\texturas.c
+	"texturas.h"
+
+1718811249 source:c:\users\caupt - alunos\downloads\raylib-master\src\final-hero-main\texturas_demonio.c
+	"texturas_demonio.h"
+
+1718811250 source:c:\users\caupt - alunos\desktop\raylib-master\src\final-hero-main\main.c
+	"raylib.h"
+	"texturas.h"
+	"texturas_demonio.h"
+	<math.h>
+	<stdbool.h>
+
+1718811250 c:\users\caupt - alunos\desktop\raylib-master\src\final-hero-main\texturas.h
+	"raylib.h"
+
+1718811250 c:\users\caupt - alunos\desktop\raylib-master\src\final-hero-main\texturas_demonio.h
+	"raylib.h"
+
+1718811250 source:c:\users\caupt - alunos\desktop\raylib-master\src\final-hero-main\texturas.c
+	"texturas.h"
+
+1718811250 source:c:\users\caupt - alunos\desktop\raylib-master\src\final-hero-main\texturas_demonio.c
+	"texturas_demonio.h"
+

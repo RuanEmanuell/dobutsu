@@ -4,10 +4,8 @@
 
 typedef enum { SCREEN_TITLE, SCREEN_GAMEPLAY, SCREEN_ENDING } GameScreen;
 
-
 int main(void)
 {
-    
     const int screenWidth = 800;
     const int screenHeight = 600;
 
@@ -25,20 +23,20 @@ int main(void)
     int gifFrameSpeed = 20;
 
     //BOLA
-    Vector2 ballPosition = { screenWidth/2, screenHeight/2 };
+    Vector2 ballPosition = { screenWidth / 2, screenHeight / 2 };
     float ballRadius = 20.0f;
     int ballSpeedX = 6;
     int ballSpeedY = -4;
 
     //AZUL
-    Rectangle player = { 10, screenHeight/2 - 50, 25, 100 };
+    Rectangle player = { 0, screenHeight / 2 - 50, 10, 100 };
     float playerSpeed = 8.0f;
     int playerScore = 0;
 
     //VERDE
-    Rectangle enemy = { screenWidth - 10 - 25, screenHeight/2 - 50, 25, 100 };
+    Rectangle enemy = { screenWidth - 10, screenHeight / 2 - 50, 25, 100 };
     float enemySpeed = 8.0f;
-    int enemyVisionRange = screenWidth/2;
+    int enemyVisionRange = screenWidth / 2;
     int enemyScore = 0;
 
     Font fntTitle = LoadFontEx("resources/pixantiqua.ttf", 12, 0, 0);
@@ -55,13 +53,14 @@ int main(void)
     int framesCounter = 0;
     GameScreen currentScreen = SCREEN_TITLE; // 0-INICIO, 1-GAMEPLAY, 2-FIM
 
-    SetTargetFPS(60); 
+    const float gameTime = 60.0f; // Tempo total do jogo em segundos
+    float startTime = 0.0f; // Tempo inicial do jogo
 
-   //LOOP PRINCIPAL
+    SetTargetFPS(60);
+
+    //LOOP PRINCIPAL
     while (!WindowShouldClose() && !finishGame) // Detectar botão de fechar janela ou tecla ESC
     {
-      
-
         switch (currentScreen)
         {
             case SCREEN_TITLE:
@@ -70,6 +69,12 @@ int main(void)
 
                 if (IsKeyPressed(KEY_ENTER))
                 {
+                    startTime = GetTime(); // Inicia o contador de tempo
+                    playerScore = 0;
+                    enemyScore = 0;
+                    ballPosition = (Vector2){ screenWidth / 2, screenHeight / 2 };
+                    ballSpeedX = 6;
+                    ballSpeedY = -4;
                     currentScreen = SCREEN_GAMEPLAY;
                 }
             } break;
@@ -118,17 +123,35 @@ int main(void)
                         PlaySound(fxPong);
                         ballSpeedX *= -1;
                     }
+
+                    // Calcule o tempo restante
+                    float elapsedTime = GetTime() - startTime;
+                    float remainingTime = gameTime - elapsedTime;
+
+                    // Verifique se o tempo acabou
+                    if (remainingTime <= 0)
+                    {
+                        currentScreen = SCREEN_ENDING;
+                    }
                 }
-                    
+
                 //PAUSA O JOGO COM P
                 if (IsKeyPressed(KEY_P)) pause = !pause;
 
-                if (IsKeyPressed(KEY_ENTER)) currentScreen = SCREEN_ENDING;
             } break;
             case SCREEN_ENDING:
             {
-                //FIM DO JOGO COM ENTER
                 if (IsKeyPressed(KEY_ENTER))
+                {
+                    startTime = GetTime();
+                    playerScore = 0;
+                    enemyScore = 0;
+                    ballPosition = (Vector2){ screenWidth / 2, screenHeight / 2 };
+                    ballSpeedX = 6;
+                    ballSpeedY = -4;
+                    currentScreen = SCREEN_GAMEPLAY;
+                }
+                else if (IsKeyPressed(KEY_ESCAPE))
                 {
                     finishGame = true;
                 }
@@ -137,7 +160,7 @@ int main(void)
         }
 
         gifFrameCounter++;
-        
+
         if (gifFrameCounter >= gifFrameSpeed) {
             gifFrameCounter = 0;
             currentGifFrame++;
@@ -146,65 +169,69 @@ int main(void)
 
         BeginDrawing();
 
-            ClearBackground(RAYWHITE);
+        ClearBackground(RAYWHITE);
 
-            //FUNDO
-            DrawTexture(gifFrames[currentGifFrame], 0, 0, WHITE);
+        //FUNDO
+        DrawTexture(gifFrames[currentGifFrame], 0, 0, WHITE);
 
-            switch (currentScreen)
+        switch (currentScreen)
+        {
+            case SCREEN_TITLE:
             {
-                case SCREEN_TITLE:
+                DrawTextEx(fntTitle, "DOBUTSU", (Vector2){ 200, 100 }, fntTitle.baseSize * 6, 4, WHITE);
+
+                if ((framesCounter / 30) % 2) DrawText("PRESSIONE ENTER para COMEÇAR", 200, 300, 30, WHITE);
+
+            } break;
+
+            case SCREEN_GAMEPLAY:
+            {
+                DrawCircleV(ballPosition, ballRadius, RED);
+
+                DrawRectangleRec(player, BLUE);
+
+                DrawRectangleRec(enemy, DARKGREEN);
+
+                DrawLine(enemyVisionRange, 0, enemyVisionRange, screenHeight, GRAY);
+
+                DrawText(TextFormat("%04i", playerScore), 100, 10, 30, BLUE);
+                DrawText(TextFormat("%04i", enemyScore), screenWidth - 200, 10, 30, DARKGREEN);
+
+                float elapsedTime = GetTime() - startTime; // Calcula o tempo decorrido
+                float remainingTime = gameTime - elapsedTime; // Calcula o tempo restante
+                DrawText(TextFormat("Tempo: %.2f", remainingTime), screenWidth / 2 - 50, 10, 30, BLACK); // Exibe o tempo restante
+
+                if (pause)
                 {
-                    DrawTextEx(fntTitle, "DOBUTSU", (Vector2){ 200, 100 }, fntTitle.baseSize*6, 4, WHITE);
+                    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.8f));
+                    DrawText("JOGO PAUSADO", 320, 200, 30, WHITE);
+                }
+            } break;
 
-                    if ((framesCounter/30)%2) DrawText("PRESSIONE ENTER para COMEÇAR", 200, 300, 30, WHITE);
-
-                } break;
-                
-                case SCREEN_GAMEPLAY:
-                {
-                    DrawCircleV(ballPosition, ballRadius, RED);
-
-                    DrawRectangleRec(player, BLUE);
-
-                    DrawRectangleRec(enemy, DARKGREEN);
-
-                    DrawLine(enemyVisionRange, 0, enemyVisionRange, screenHeight, GRAY);
-
-                    DrawText(TextFormat("%04i", playerScore), 100, 10, 30, BLUE);
-                    DrawText(TextFormat("%04i", enemyScore), screenWidth - 200, 10, 30, DARKGREEN);
-
-                    if (pause)
-                    {
-                        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.8f));
-                        DrawText("JOGO PAUSADO", 320, 200, 30, WHITE);
-                    }
-                } break;
-                
-                case SCREEN_ENDING:
-                {
-                    
-                    
-                    if (enemyScore > playerScore){
-                      DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
-                      DrawText("FIM DE JOGO", 10, 10, 30,WHITE);
-                      DrawText(TextFormat("Jogador VERDE ganha com %d pontos!", enemyScore), screenWidth / 2 - MeasureText(TextFormat("Jogador VERDE ganha com %d pontos!", enemyScore), 20) / 2, screenHeight / 2, 20, WHITE);
-                    } 
-                    else if (playerScore > enemyScore){
-                     DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
-                     DrawText("FIM DE JOGO", 10, 10, 30,WHITE);
-                     DrawText(TextFormat("Jogador AZUL ganha com %d pontos!", playerScore), screenWidth / 2 - MeasureText(TextFormat("Jogador AZUL ganha com %d pontos!", playerScore), 20) / 2, screenHeight / 2, 20, WHITE);
-                   }
-                   else{
+            case SCREEN_ENDING:
+            {
+                if (enemyScore > playerScore) {
+                    DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
+                    DrawText("FIM DE JOGO", 10, 10, 30, WHITE);
+                    DrawText(TextFormat("Jogador VERDE ganha com %d pontos!", enemyScore), screenWidth / 2 - MeasureText(TextFormat("Jogador VERDE ganha com %d pontos!", enemyScore), 20) / 2, screenHeight / 2, 20, WHITE);
+                }
+                else if (playerScore > enemyScore) {
+                    DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
+                    DrawText("FIM DE JOGO", 10, 10, 30, WHITE);
+                    DrawText(TextFormat("Jogador AZUL ganha com %d pontos!", playerScore), screenWidth / 2 - MeasureText(TextFormat("Jogador AZUL ganha com %d pontos!", playerScore), 20) / 2, screenHeight / 2, 20, WHITE);
+                }
+                else {
                     DrawRectangle(0, 0, screenWidth, screenHeight, PURPLE);
-                    DrawText("FIM DE JOGO", 10, 10, 30,WHITE);
+                    DrawText("FIM DE JOGO", 10, 10, 30, WHITE);
                     const char* empateMsg = "Houve um EMPATE! Jogue novamente!";
-                      DrawText(empateMsg, screenWidth / 2 - MeasureText(empateMsg, 20) / 2, screenHeight / 2, 20, WHITE);
-                   }
-                    
-                } break;
-                default: break;
-            }
+                    DrawText(empateMsg, screenWidth / 2 - MeasureText(empateMsg, 20) / 2, screenHeight / 2, 20, WHITE);
+                }
+
+                DrawText("Pressione ENTER para jogar novamente ou ESC para sair", 100, screenHeight - 50, 20, WHITE);
+
+            } break;
+            default: break;
+        }
 
         EndDrawing();
     }
